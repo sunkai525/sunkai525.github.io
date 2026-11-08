@@ -21,7 +21,7 @@ yarn-error.log*
 node_modules/
 
 # Local release artifacts (avoid committing large binaries)
-*.zip
+# *.zip
 *.7z
 *.tar
 *.tar.gz
