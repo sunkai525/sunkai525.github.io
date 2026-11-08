@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>发布 Release</title>
+  <style>
+    :root {
+      --bg: #ffffff; --bg-subtle: #f6f8fa; --border: #d0d7de; --border-muted: #d8dee4;
+      --fg: #1f2328; --fg-muted: #636c76; --accent: #0969da; --accent-fg: #ffffff;
+      --success: #1a7f37; --success-bg: #dafbe1; --danger: #cf222e; --danger-bg: #ffebe9;
+      --radius: 6px; --max: 760px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1117; --bg-subtle: #161b22; --border: #30363d; --border-muted: #21262d;
+        --fg: #e6edf3; --fg-muted: #8d96a0; --accent: #4493f8; --accent-fg: #ffffff;
+        --success: #3fb950; --success-bg: #2ea04326; --danger: #f85149; --danger-bg: #f8514926;
+      }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; color: var(--fg); background: var(--bg); }
+    .container { max-width: var(--max); margin: 0 auto; padding: 24px 16px 48px; }
+    h1 { margin: 0 0 6px; font-size: 24px; font-weight: 600; }
+    .lead { color: var(--fg-muted); margin: 0 0 20px; }
+    .card { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); overflow: hidden; }
+    .card-body { padding: 16px; }
+    .field { margin-bottom: 14px; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; }
+    .hint { font-weight: 400; color: var(--fg-muted); font-size: 12px; }
+    input[type=text], input[type=date], textarea {
+      width: 100%; padding: 8px 12px; font: inherit; color: var(--fg); background: var(--bg);
+      border: 1px solid var(--border); border-radius: var(--radius);
+    }
+    textarea { min-height: 96px; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; }
+    textarea.notes { font-family: inherit; font-size: 14px; min-height: 110px; }
+    input:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 640px) { .row { grid-template-columns: 1fr; } }
+    .check { display: flex; align-items: center; gap: 8px; font-weight: 400; }
+    .check input { width: 16px; height: 16px; }
+    .actions { display: flex; gap: 10px; align-items: center; padding: 16px; border-top: 1px solid var(--border-muted); background: var(--bg-subtle); }
+    button {
+      padding: 8px 16px; font: inherit; font-weight: 600; cursor: pointer; border-radius: var(--radius);
+      border: 1px solid rgba(31,35,40,0.15); background: var(--accent); color: var(--accent-fg);
+    }
+    button:disabled { opacity: .6; cursor: default; }
+    .link { color: var(--accent); text-decoration: none; }
+    .link:hover { text-decoration: underline; }
+    .meta { color: var(--fg-muted); font-size: 12px; margin-bottom: 14px; }
+    #result { margin-top: 16px; }
+    .msg { padding: 12px 14px; border-radius: var(--radius); border: 1px solid; }
+    .msg.ok { color: var(--success); background: var(--success-bg); border-color: color-mix(in srgb, var(--success) 35%, transparent); }
+    .msg.err { color: var(--danger); background: var(--danger-bg); border-color: color-mix(in srgb, var(--danger) 35%, transparent); }
+    .msg h3 { margin: 0 0 8px; font-size: 14px; color: inherit; }
+    .msg ul { margin: 0; padding-left: 20px; color: var(--fg); }
+    .msg li { margin: 4px 0; }
+    .msg a { color: var(--accent); word-break: break-all; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+    .rel-list { width: 100%; border-collapse: collapse; }
+    .rel-list th, .rel-list td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border-muted); vertical-align: middle; }
+    .rel-list th { font-size: 12px; color: var(--fg-muted); font-weight: 600; background: var(--bg-subtle); }
+    .rel-list tr:last-child td { border-bottom: 0; }
+    .btn-danger { padding: 4px 10px; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: var(--radius); border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent); background: var(--bg); color: var(--danger); }
+    .btn-danger:hover { background: var(--danger-bg); }
+    .muted { color: var(--fg-muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>发布 Release</h1>
+    <p class="lead">填写 GitHub 源链接后保存，会自动解析版本/文件名并按 <code>release.config.json</code> 在原始链接前拼接加速前缀，写入 <code>releases.json</code>。</p>
+    <div class="meta" id="meta">正在读取配置…</div>
+
+    <form id="form" class="card">
+      <div class="card-body">
+        <div class="field">
+          <label for="urls">GitHub 源链接 <span class="hint">（必填，每行一个；同版本不同架构/文件可一次填多行）</span></label>
+          <textarea id="urls" name="urls" required placeholder="https://github.com/owner/repo/releases/download/v1.0.0/app-linux-amd64.zip&#10;https://github.com/owner/repo/releases/download/v1.0.0/app-windows-amd64.zip&#10;https://github.com/owner/repo/blob/main/app.sha256"></textarea>
+          <div class="hint" style="margin-top:6px">支持 <code>releases/download</code>、<code>blob/raw</code> 链接（加速为原链接前直接拼接前缀）。后续给同一版本补充其他架构时，填写相同 Tag 和新链接保存，会自动合并到该版本。</div>
+        </div>
+        <div class="field">
+          <label for="name">名称 <span class="hint">（可选，默认使用 tag）</span></label>
+          <input id="name" name="name" type="text" placeholder="例如：PC28 v4.5.0 (Windows amd64)">
+        </div>
+        <div class="field">
+          <label for="notes">更新说明 <span class="hint">（可选；纯文本会自动转为列表，包含 HTML 标签则按 HTML 保存）</span></label>
+          <textarea id="notes" name="notes" class="notes" placeholder="- 新增功能&#10;- 修复问题"></textarea>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="tag">Tag <span class="hint">（可选；补充同版本资源时请填写相同 Tag）</span></label>
+            <input id="tag" name="tag" type="text" placeholder="v1.0.0">
+          </div>
+          <div class="field">
+            <label for="date">发布日期 <span class="hint">（可选，默认自动推断）</span></label>
+            <input id="date" name="date" type="date">
+          </div>
+        </div>
+        <label class="check"><input id="prerelease" name="prerelease" type="checkbox"> 标记为 Pre-release</label>
+      </div>
+      <div class="actions">
+        <button id="submit" type="submit">保存并生成 Release</button>
+        <a class="link" href="/index.html" target="_blank">打开预览页</a>
+      </div>
+    </form>
+
+    <div id="result"></div>
+
+    <section style="margin-top:24px">
+      <h2 style="margin:0 0 12px;font-size:18px;font-weight:600">已发布版本</h2>
+      <div id="release-list" class="card"><div class="card-body" style="color:var(--fg-muted)">加载中…</div></div>
+    </section>
+  </div>
+
+  <script>
+    const meta = document.getElementById('meta');
+    const form = document.getElementById('form');
+    const result = document.getElementById('result');
+    const submit = document.getElementById('submit');
+    const releaseList = document.getElementById('release-list');
+
+    async function loadConfig() {
+      try {
+        const res = await fetch('/api/config');
+        const data = await res.json();
+        const names = (data.mirrors || []).map(m => m.label).join('、');
+        meta.textContent = names ? `已配置加速镜像：${names}` : '未配置加速镜像（将仅生成原始链接）';
+      } catch {
+        meta.textContent = '无法读取配置；请确认已通过 node scripts/publish-server.mjs 启动本地发布页。';
+      }
+    }
+
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    async function loadReleases() {
+      try {
+        const res = await fetch('/api/releases');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const releases = await res.json();
+        if (!Array.isArray(releases) || !releases.length) {
+          releaseList.innerHTML = '<div class="card-body" style="color:var(--fg-muted)">暂无已发布版本</div>';
+          return;
+        }
+        releaseList.innerHTML = `<table class="rel-list"><thead><tr><th>Tag</th><th>名称</th><th>日期</th><th>Assets</th><th></th></tr></thead><tbody>${releases.map(r => `<tr><td><code>${esc(r.tag)}</code>${r.latest ? ' <span class="muted">Latest</span>' : ''}</td><td>${esc(r.name || r.tag)}</td><td class="muted">${esc(r.date || '')}</td><td class="muted">${(r.assets || []).length}</td><td style="text-align:right"><button type="button" class="btn-danger" data-del="${esc(r.tag)}">删除</button></td></tr>`).join('')}</tbody></table>`;
+        releaseList.querySelectorAll('[data-del]').forEach(btn => btn.addEventListener('click', () => deleteRelease(btn.dataset.del)));
+      } catch (err) {
+        releaseList.innerHTML = `<div class="card-body" style="color:var(--fg-muted)">无法加载版本列表：${esc(err.message)}</div>`;
+      }
+    }
+
+    async function deleteRelease(tag) {
+      if (!confirm(`确定删除版本 ${tag} 吗？此操作会从 releases.json 中移除该版本。`)) return;
+      try {
+        const res = await fetch(`/api/releases/${encodeURIComponent(tag)}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        result.innerHTML = `<div class="msg ok"><strong>已删除版本：</strong>${esc(tag)}</div>`;
+        loadReleases();
+      } catch (err) {
+        result.innerHTML = `<div class="msg err"><strong>删除失败：</strong>${esc(err.message)}</div>`;
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submit.disabled = true;
+      result.innerHTML = '';
+      try {
+        const body = {
+          urls: document.getElementById('urls').value,
+          name: document.getElementById('name').value,
+          notes: document.getElementById('notes').value,
+          tag: document.getElementById('tag').value,
+          date: document.getElementById('date').value,
+          prerelease: document.getElementById('prerelease').checked,
+        };
+        const res = await fetch('/api/releases', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || `HTTP ${res.status}`);
+        const r = data.release;
+        const assets = (r.assets || []).map(a => {
+          const links = (a.downloads || []).map(d => `<li><code>${esc(d.label)}</code> <a href="${esc(d.url)}" target="_blank" rel="noreferrer">${esc(d.url)}</a></li>`).join('');
+          return `<li><strong>${esc(a.name)}</strong><ul>${links}</ul></li>`;
+        }).join('');
+        result.innerHTML = `<div class="msg ok"><h3>已${data.action === 'created' ? '新增' : '更新'} ${esc(r.tag)}（${esc(r.date)}，${data.mirrorCount} 个镜像）</h3><ul>${assets}</ul><p style="margin:8px 0 0;color:var(--fg)">已写入 <code>releases.json</code>。<a class="link" href="/index.html#${esc(r.tag)}" target="_blank">预览该版本</a></p></div>`;
+        if (data.action === 'created') form.reset();
+        loadConfig();
+        loadReleases();
+      } catch (err) {
+        result.innerHTML = `<div class="msg err"><strong>保存失败：</strong>${esc(err.message)}</div>`;
+      } finally {
+        submit.disabled = false;
+      }
+    });
+
+    loadConfig();
+    loadReleases();
+  </script>
+</body>
+</html>

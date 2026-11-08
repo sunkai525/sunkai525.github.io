@@ -1,11 +1,186 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Static Assets</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Releases</title>
+  <style>
+    :root {
+      --bg: #ffffff; --bg-subtle: #f6f8fa; --bg-inset: #eff2f5;
+      --border: #d0d7de; --border-muted: #d8dee4; --fg: #1f2328; --fg-muted: #636c76;
+      --accent: #0969da; --accent-emphasis: #0969da; --accent-fg: #ffffff; --success: #1a7f37;
+      --radius: 6px; --max: 1012px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0d1117; --bg-subtle: #161b22; --bg-inset: #21262d;
+        --border: #30363d; --border-muted: #21262d; --fg: #e6edf3; --fg-muted: #8d96a0;
+        --accent: #4493f8; --accent-emphasis: #1f6feb; --accent-fg: #ffffff; --success: #3fb950;
+      }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif; color: var(--fg); background: var(--bg); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: var(--max); margin: 0 auto; padding: 24px 16px 48px; }
+    .page-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 16px; margin-bottom: 24px; border-bottom: 1px solid var(--border-muted); }
+    .page-header h1 { margin: 0; font-size: 24px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+    .page-header h1 svg { fill: var(--fg-muted); flex-shrink: 0; }
+    .subtitle { color: var(--fg-muted); }
+    .release { display: grid; grid-template-columns: 160px 1fr; gap: 24px; padding: 24px 0; border-bottom: 1px solid var(--border-muted); }
+    .release:first-child { padding-top: 0; }
+    .release:last-child { border-bottom: 0; }
+    @media (max-width: 760px) { .release { grid-template-columns: 1fr; gap: 8px; } }
+    .release-meta { color: var(--fg-muted); font-size: 13px; }
+    .tag-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .tag { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 600; color: var(--fg); }
+    .tag svg { fill: var(--fg-muted); }
+    .badge { display: inline-block; padding: 0 7px; font-size: 12px; font-weight: 500; line-height: 18px; border: 1px solid var(--success); color: var(--success); border-radius: 2em; }
+    .badge-pre { border-color: #bf8700; color: #9a6700; }
+    @media (prefers-color-scheme: dark) { .badge-pre { border-color: #d29922; color: #d29922; } }
+    .commit { margin-top: 4px; }
+    .commit code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; padding: 0.15em 0.4em; background: var(--bg-subtle); border: 1px solid var(--border-muted); border-radius: 4px; color: var(--fg); }
+    .meta-link { margin-top: 8px; }
+    .release-main h2 { margin: 0 0 4px; font-size: 24px; font-weight: 600; line-height: 1.25; }
+    .release-main h2 a { color: var(--fg); }
+    .release-main h2 a:hover { color: var(--accent); text-decoration: none; }
+    .published { color: var(--fg-muted); margin-bottom: 16px; }
+    .notes { font-size: 14px; }
+    .notes p { margin: 0 0 12px; }
+    .notes ul { margin: 0 0 12px; padding-left: 2em; }
+    .notes h3 { font-size: 16px; font-weight: 600; margin: 16px 0 8px; }
+    .assets { margin-top: 16px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .assets-header { padding: 10px 16px; font-weight: 600; background: var(--bg-subtle); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+    .asset { padding: 14px 16px; border-bottom: 1px solid var(--border-muted); }
+    .asset:last-child { border-bottom: 0; }
+    .asset-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+    .asset-head svg { fill: var(--fg-muted); flex-shrink: 0; margin-top: 2px; }
+    .asset-info { min-width: 0; flex: 1; }
+    .asset-file { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; font-weight: 600; color: var(--fg); word-break: break-all; }
+    .asset-size { color: var(--fg-muted); font-size: 12px; margin-top: 2px; }
+    .dl-label { font-size: 12px; font-weight: 600; color: var(--fg-muted); margin-bottom: 8px; }
+    .downloads { display: flex; flex-wrap: wrap; gap: 8px; }
+    .dl {
+      display: inline-flex; align-items: center; justify-content: center; min-height: 32px; padding: 5px 14px;
+      font-size: 13px; font-weight: 600; border-radius: 6px; border: 1px solid var(--border);
+      background: var(--bg-subtle); color: var(--fg); text-decoration: none !important; transition: border-color .12s, background .12s;
+    }
+    .dl:hover { border-color: var(--accent); color: var(--accent); }
+    .dl.primary { background: var(--accent-emphasis); border-color: var(--accent-emphasis); color: var(--accent-fg); }
+    .dl.primary:hover { filter: brightness(1.08); color: var(--accent-fg); }
+    .dl.original { color: var(--fg-muted); font-weight: 500; }
+    .empty, .error { color: var(--fg-muted); padding: 32px 0; text-align: center; }
+    .error code { font-size: 12px; }
+  </style>
 </head>
 <body>
-    Hellw World!!!
+  <div class="container">
+    <header class="page-header">
+      <h1>
+        <svg aria-hidden="true" height="24" viewBox="0 0 16 16" width="24"><path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"></path></svg>
+        Releases
+      </h1>
+      <span class="subtitle" id="release-count"></span>
+    </header>
+    <main id="releases"><div class="empty">加载中…</div></main>
+  </div>
+
+  <script>
+    const icons = {
+      tag: '<svg aria-hidden="true" height="16" viewBox="0 0 16 16" width="16"><path d="M1 7.775V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 0 1 0 2.474l-5.026 5.026a1.75 1.75 0 0 1-2.474 0l-6.25-6.25A1.752 1.752 0 0 1 1 7.775Zm1.5 0c0 .066.026.13.073.177l6.25 6.25a.25.25 0 0 0 .354 0l5.025-5.025a.25.25 0 0 0 0-.354l-6.25-6.25a.25.25 0 0 0-.177-.073H2.75a.25.25 0 0 0-.25.25ZM6 5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"></path></svg>',
+      pkg: '<svg aria-hidden="true" height="16" viewBox="0 0 16 16" width="16"><path d="m8.878.392 5.25 3.045c.54.314.872.89.872 1.514v6.098a1.75 1.75 0 0 1-.872 1.514l-5.25 3.045a1.75 1.75 0 0 1-1.756 0l-5.25-3.045A1.75 1.75 0 0 1 1 11.049V4.951c0-.624.332-1.201.872-1.514L7.122.392a1.75 1.75 0 0 1 1.756 0ZM7.875 1.69l-4.63 2.685L8 7.133l4.755-2.758-4.63-2.685a.248.248 0 0 0-.25 0ZM2.5 5.677v5.372c0 .09.047.171.125.216l4.625 2.683V8.432Zm6.25 8.271 4.625-2.683a.25.25 0 0 0 .125-.216V5.677L8.75 8.432Z"></path></svg>'
+    };
+
+    function esc(s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+
+    function getDownloads(a) {
+      if (Array.isArray(a.downloads) && a.downloads.length) return a.downloads;
+      const list = [];
+      if (a.url) list.push({ label: "下载", url: a.url });
+      if (a.originalUrl && a.originalUrl !== a.url) list.push({ label: "原始", url: a.originalUrl, original: true });
+      return list;
+    }
+
+    function renderAssets(assets) {
+      if (!assets || !assets.length) return "";
+      return `
+        <section class="assets" aria-label="Assets">
+          <div class="assets-header">${icons.pkg} Assets <span style="font-weight:400;color:var(--fg-muted)">(${assets.length})</span></div>
+          ${assets.map(a => {
+            const downloads = getDownloads(a);
+            const firstAccel = downloads.findIndex(d => !d.original);
+            return `
+              <div class="asset">
+                <div class="asset-head">
+                  ${icons.pkg}
+                  <div class="asset-info">
+                    <div class="asset-file">${esc(a.name)}</div>
+                    ${a.size && a.size !== "—" ? `<div class="asset-size">${esc(a.size)}</div>` : ""}
+                  </div>
+                </div>
+                <div class="dl-label">选择下载线路</div>
+                <div class="downloads">
+                  ${downloads.map((d, i) => {
+                    const cls = d.original ? "dl original" : (i === firstAccel ? "dl primary" : "dl");
+                    return `<a class="${cls}" href="${esc(d.url)}" target="_blank" rel="noreferrer" download>${esc(d.label)}</a>`;
+                  }).join("")}
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </section>
+      `;
+    }
+
+    function renderRelease(r) {
+      const badges = [
+        r.latest ? '<span class="badge">Latest</span>' : '',
+        r.prerelease ? '<span class="badge badge-pre">Pre-release</span>' : ''
+      ].filter(Boolean).join(' ');
+      const source = r.source && r.source.url
+        ? `<div class="meta-link"><a href="${esc(r.source.url)}" target="_blank" rel="noreferrer">GitHub Release</a></div>`
+        : '';
+      return `
+        <article class="release" id="${esc(r.tag)}">
+          <aside class="release-meta">
+            <div class="tag-row"><span class="tag">${icons.tag} ${esc(r.tag)}</span></div>
+            ${badges ? `<div style="margin-bottom:8px">${badges}</div>` : ''}
+            ${r.commit ? `<div class="commit"><code>${esc(r.commit)}</code></div>` : ''}
+            ${source}
+          </aside>
+          <div class="release-main">
+            <h2><a href="#${esc(r.tag)}">${esc(r.name || r.tag)}</a></h2>
+            <div class="published">发布于 ${esc(r.date || "")}</div>
+            <div class="notes">${r.notesHtml || r.notes || ""}</div>
+            ${renderAssets(r.assets)}
+          </div>
+        </article>
+      `;
+    }
+
+    async function main() {
+      const root = document.getElementById("releases");
+      const count = document.getElementById("release-count");
+      try {
+        const res = await fetch("./releases.json", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const releases = await res.json();
+        if (!Array.isArray(releases) || releases.length === 0) {
+          root.innerHTML = '<div class="empty">暂无发布版本</div>';
+          count.textContent = "";
+          return;
+        }
+        root.innerHTML = releases.map(renderRelease).join("");
+        count.textContent = `${releases.length} 个版本`;
+      } catch (err) {
+        root.innerHTML = `<div class="error">无法加载 <code>releases.json</code><br><span style="font-size:12px">${esc(err.message)}。请通过 HTTP 服务访问（如 GitHub Pages），或检查 releases.json。</span></div>`;
+        count.textContent = "";
+      }
+    }
+
+    main();
+  </script>
 </body>
 </html>

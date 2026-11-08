@@ -1,0 +1,50 @@
+[
+  {
+    "tag": "main",
+    "name": "main",
+    "latest": true,
+    "prerelease": false,
+    "date": "2026-11-08",
+    "notesHtml": "<ul><li>1. 账号卡片刷新按钮增加状态反馈；</li><li>2. 连输暂停口径改为与连赢跳过对称的周期计数（schema 9），复盘/账号配置/实盘链路同步接入。</li><li>复盘页按日期取数改为带日历的日期选择（最近 5 年、默认最近 30 天、不限制无数据日期），逐期明细新增“查看全部”大窗口；同步更新 UI-SPEC、TODO 与 memory，相关测试已更新。</li><li>3. - 房间续期：服务端记住的「当前房间」会随空闲失效，届时盘口/赔率照常 200、只有下发注单被拒。现在每次探盘口（probe）顺带在同一次认证内重进一次房，下单前必已续过，不新增定时器/线程/设置项。进房失败照原样抛出（fail-closed），未动 retry_auth、金额/赔率口径与任何闸门。</li><li>失败可见：真实注单失败后原先既不进告警、也说不清原因。现在把每腿错误原因拼进 ExecutionReport.message，并在下单链 status=failed 时发 RUNTIME_ERROR 事件，总览告警卡与账号卡提醒行即亮起，文案含期号与各腿原因（错误文本来自平台异常，无密钥/路径）。记录详情文本保持原样，仅运行时即时提示。</li><li>测试：单元/契约加断言，覆盖重试后失败、网络错误不重试、结果未知落库、真实 failed 发事件四条路径。全量 1061 passed / 6 skipped，doctor 正常。</li></ul>",
+    "source": {
+      "owner": "sunkai525",
+      "repo": "sunkai525.github.io",
+      "url": "https://github.com/sunkai525/sunkai525.github.io/releases/tag/main"
+    },
+    "assets": [
+      {
+        "name": "PC28-Windows-amd64-20261108-v4.5.0.zip",
+        "size": "—",
+        "url": "https://gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/blob/main/PC28-Windows-amd64-20261108-v4.5.0.zip",
+        "originalUrl": "https://github.com/sunkai525/sunkai525.github.io/blob/main/PC28-Windows-amd64-20261108-v4.5.0.zip",
+        "downloads": [
+          {
+            "label": "原始",
+            "url": "https://github.com/sunkai525/sunkai525.github.io/blob/main/PC28-Windows-amd64-20261108-v4.5.0.zip",
+            "original": true
+          },
+          {
+            "label": "gh-proxy",
+            "url": "https://gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/blob/main/PC28-Windows-amd64-20261108-v4.5.0.zip"
+          },
+          {
+            "label": "v4",
+            "url": "https://v4.gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/blob/main/PC28-Windows-amd64-20261108-v4.5.0.zip"
+          },
+          {
+            "label": "v6",
+            "url": "https://v6.gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/blob/main/PC28-Windows-amd64-20261108-v4.5.0.zip"
+          },
+          {
+            "label": "cdn",
+            "url": "https://cdn.gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/blob/main/PC28-Windows-amd64-20261108-v4.5.0.zip"
+          },
+          {
+            "label": "axisnow",
+            "url": "https://axisnow.gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/blob/main/PC28-Windows-amd64-20261108-v4.5.0.zip"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "mirrors": [
+    { "label": "gh-proxy", "prefix": "https://gh-proxy.org/" },
+    { "label": "v4", "prefix": "https://v4.gh-proxy.org/" },
+    { "label": "v6", "prefix": "https://v6.gh-proxy.org/" },
+    { "label": "cdn", "prefix": "https://cdn.gh-proxy.org/" },
+    { "label": "axisnow", "prefix": "https://axisnow.gh-proxy.org/" }
+  ]
+}
