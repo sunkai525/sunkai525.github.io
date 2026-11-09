@@ -1,8 +1,56 @@
 [
   {
+    "tag": "v4.5.4",
+    "name": "v4.5.4",
+    "latest": true,
+    "prerelease": false,
+    "date": "2026-11-09",
+    "notesHtml": "<ul><li>模拟/真实两标签页各设止盈止损与勾选账号；</li><li>按已结算日盈亏分模式合计，触线只停勾选账号新注，当天保持、次日 19:00 自动恢复；</li><li>账号卡与页面顶部提示；删账号同步清名单。</li></ul>",
+    "source": {
+      "owner": "sunkai525",
+      "repo": "sunkai525.github.io",
+      "url": "https://github.com/sunkai525/sunkai525.github.io/releases/tag/v4.5.4"
+    },
+    "assets": [
+      {
+        "name": "PC28-Windows-amd64-20261109-v4.5.4.zip",
+        "size": "—",
+        "url": "https://gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/releases/download/v4.5.4/PC28-Windows-amd64-20261109-v4.5.4.zip",
+        "originalUrl": "https://github.com/sunkai525/sunkai525.github.io/releases/download/v4.5.4/PC28-Windows-amd64-20261109-v4.5.4.zip",
+        "downloads": [
+          {
+            "label": "原始",
+            "url": "https://github.com/sunkai525/sunkai525.github.io/releases/download/v4.5.4/PC28-Windows-amd64-20261109-v4.5.4.zip",
+            "original": true
+          },
+          {
+            "label": "gh-proxy",
+            "url": "https://gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/releases/download/v4.5.4/PC28-Windows-amd64-20261109-v4.5.4.zip"
+          },
+          {
+            "label": "v4",
+            "url": "https://v4.gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/releases/download/v4.5.4/PC28-Windows-amd64-20261109-v4.5.4.zip"
+          },
+          {
+            "label": "v6",
+            "url": "https://v6.gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/releases/download/v4.5.4/PC28-Windows-amd64-20261109-v4.5.4.zip"
+          },
+          {
+            "label": "cdn",
+            "url": "https://cdn.gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/releases/download/v4.5.4/PC28-Windows-amd64-20261109-v4.5.4.zip"
+          },
+          {
+            "label": "axisnow",
+            "url": "https://axisnow.gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/releases/download/v4.5.4/PC28-Windows-amd64-20261109-v4.5.4.zip"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "tag": "v4.5.1",
     "name": "v4.5.1",
-    "latest": true,
+    "latest": false,
     "prerelease": false,
     "date": "2026-11-09",
     "notesHtml": "<ul><li>runtime.auto_bet：复用开盘检查的盘口快照给下注前封盘检查，不再同一期重复 probe（避免 1 秒内重复登录/进房导致平台拒绝）；复用时按经过秒数扣减 next_in，封盘判定不放松</li><li>告警改为带出 PlatformError 分类与原文，不再只显示异常类名</li><li>补充 3 条单测（单次 probe、复用快照封盘拦截、失败原因可见）；全量 1072 passed, 6 skipped</li><li>进房预取并缓存赔率/限额，下注时复用缓存，拒单后清缓存重取</li><li>自动实盘复用探盘口会话与新鲜快照，减少重复认证/快照请求（保留下单后刷新）</li><li>账号配置新增续房间隔（默认30分钟，0关闭）；自动下注探盘口不再续房，其他探盘口行为不变；运行时按间隔续房</li></ul>",
