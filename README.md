@@ -71,7 +71,7 @@ node scripts/add-release.mjs \
   --notes "<h3>What's Changed</h3><ul><li>修复问题</li></ul>"
 ```
 
-常用选项：`--tag`、`--name`、`--date YYYY-MM-DD`、`--notes`、`--commit`、`--prerelease`、`--no-latest`。同 Tag 重复运行会更新/合并该版本。
+常用选项：`--tag`、`--name`、`--date YYYY-MM-DD`、`--notes`、`--commit`、`--prerelease`、`--no-latest`。同 Tag 重复运行只会把新资源合并到该版本（保留原有更新说明、日期）。`blob`/`raw` 链接的 Tag 留空时会从文件名自动识别版本号（如 `v4.5.1`），使每个版本成为独立 Release，新版本排在旧版本上方且不改动旧版本。
 
 ## 支持的源链接
 

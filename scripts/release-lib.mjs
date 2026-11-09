@@ -75,6 +75,11 @@ export function inferDate(tag) {
   return `${m[1]}-${m[2]}-${m[3]}`;
 }
 
+export function inferVersionFromName(file) {
+  const m = String(file || "").match(/v?\d+(?:\.\d+)+/);
+  return m ? m[0] : null;
+}
+
 export function getMirrors(config) {
   if (Array.isArray(config?.mirrors) && config.mirrors.length) {
     return config.mirrors
@@ -114,10 +119,18 @@ export function createRelease({ urls, tag, name, date, notes, notesHtml, commit,
     if (!p) throw new Error(`不是支持的 GitHub 资源链接（支持 releases/download、blob、raw）: ${url}`);
     return p;
   });
-  const finalTag = String(tag || parsed[0].tag).trim();
+  const explicitTag = String(tag || "").trim();
+  const urlTag = String(parsed[0].tag || "").trim();
+  // blob/raw 链接里的 ref 往往是分支名（如 main），不是版本号。此时用文件名里的版本号作为 tag，
+  // 让每个版本成为独立的一条 release，新版本就不会覆盖老版本。
+  const nameVersion = inferVersionFromName(parsed[0].file);
+  const useNameVersion = nameVersion && parsed.every((p) => p.kind !== "release");
+  const finalTag = explicitTag || (useNameVersion ? nameVersion : urlTag);
   if (!finalTag) throw new Error("无法确定版本 tag");
-  const mismatched = parsed.find((p) => p.tag !== finalTag);
-  if (mismatched) throw new Error(`链接中的 tag (${mismatched.tag}) 与目标 tag (${finalTag}) 不一致`);
+  // 允许显式 tag 与链接 ref 不同（例如 blob/main 链接手动指定版本），只校验多条链接的 ref 一致
+  const ref0 = parsed[0].tag;
+  const mismatched = parsed.find((p) => p.tag !== ref0);
+  if (mismatched) throw new Error(`链接中的 ref (${mismatched.tag}) 与首个链接 (${ref0}) 不一致，请确认属于同一版本`);
   return {
     tag: finalTag,
     name: String(name || finalTag).trim() || finalTag,
@@ -157,13 +170,15 @@ function mergeAssets(existing, incoming) {
 
 export function upsertRelease(releases, release, { mergeAssets: doMergeAssets = true } = {}) {
   const list = Array.isArray(releases) ? [...releases] : [];
-  if (release.latest) for (const r of list) r.latest = false;
   const idx = list.findIndex((r) => r.tag === release.tag);
   if (idx >= 0) {
     const prev = list[idx];
-    list[idx] = doMergeAssets ? { ...prev, ...release, assets: mergeAssets(prev.assets, release.assets) } : release;
+    // 同一版本只需补充/刷新 assets，保留已有的说明、日期、名称，避免覆盖历史内容
+    list[idx] = doMergeAssets ? { ...prev, assets: mergeAssets(prev.assets, release.assets) } : release;
     return { releases: list, action: "updated" };
   }
+  // 新版本放到最上面；旧版本仅让出 Latest 标记，说明/日期/资源等均不改动
+  if (release.latest) for (const r of list) r.latest = false;
   list.unshift(release);
   return { releases: list, action: "created" };
 }
