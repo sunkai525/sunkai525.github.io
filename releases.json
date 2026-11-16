@@ -1,8 +1,56 @@
 [
   {
+    "tag": "v5.3.36",
+    "name": "v5.3.36",
+    "latest": true,
+    "prerelease": false,
+    "date": "2026-11-16",
+    "notesHtml": "<ul><li>一、激活和续期整体换了新服务</li><li>软件改用新的官方服务来核对卡密、看公告、拿更新。旧的发卡后台已经彻底下线。</li><li>卡密现在&quot;核对一次就扣一次使用次数&quot;，并且会定时联网检查是否还有效：被停用、过期、或绑定设备太多，会立刻停止；只有暂时连不上网，才给一段宽限期继续跑。</li><li>设置页能直接看到卡密还剩多少天、已经绑了几台设备、上限多少。</li><li>配置没更新成功时，页面会直接告诉你具体原因，不再默默失败、什么都不显示。</li><li>二、下注策略更好用</li><li>新增&quot;大周期&quot;策略：先等某种开奖结果（大/小/单/双）连续出现几次才启动，进入下注后，连赢或连输满多少轮就自动收手。它和&quot;连赢跳过/连输暂停&quot;不能同时开。</li><li>倍投倍数可以填 1，意思是&quot;永不加大注金&quot;；连开触发、连输暂停、连赢跳过这些机制仍然照常生效。</li><li>选算法从&quot;可多选&quot;改成&quot;只能选一个&quot;。</li><li>修好了一个问题：模拟账户开了大周期后一直卡在&quot;等待触发&quot;、迟迟不下单。</li><li>三、看数据更清楚</li><li>下注记录和复盘里加了&quot;预测&quot;列，能直接看到预测结果；没用的&quot;票数&quot;列去掉了。</li><li>备注列：黑字改成白字；内容太长会自动换行，不会把表格撑得很宽；同一期发生多个策略动作会合并显示，并写明真正触发的那一期（大周期开始/结束、连赢跳过、连输暂停、连开触发、反投）。</li><li>账号卡片上的提示文案做了统一和简化；&quot;看全部日期&quot;和&quot;看某一天&quot;两种视图下列宽保持一致。</li><li>四、运行更稳</li><li>开奖数据全部拉取失败时，会提示你是&quot;确实查不到这期&quot;还是&quot;数据源连不上&quot;，不再只给一片空白。</li><li>修好了一个问题：某些名字里带横杠&quot;-&quot;的账号或平台，运行时会卡住、该停的时候停不下来。</li><li>生成截图时，不再在屏幕上打印账号标识和凭据相关的信息。</li></ul>",
+    "source": {
+      "owner": "sunkai525",
+      "repo": "sunkai525.github.io",
+      "url": "https://github.com/sunkai525/sunkai525.github.io/releases/tag/v5.3.36"
+    },
+    "assets": [
+      {
+        "name": "PC28-Windows-amd64-20261116-v5.3.36.zip",
+        "size": "—",
+        "url": "https://gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/releases/download/v5.3.36/PC28-Windows-amd64-20261116-v5.3.36.zip",
+        "originalUrl": "https://github.com/sunkai525/sunkai525.github.io/releases/download/v5.3.36/PC28-Windows-amd64-20261116-v5.3.36.zip",
+        "downloads": [
+          {
+            "label": "原始",
+            "url": "https://github.com/sunkai525/sunkai525.github.io/releases/download/v5.3.36/PC28-Windows-amd64-20261116-v5.3.36.zip",
+            "original": true
+          },
+          {
+            "label": "gh-proxy",
+            "url": "https://gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/releases/download/v5.3.36/PC28-Windows-amd64-20261116-v5.3.36.zip"
+          },
+          {
+            "label": "v4",
+            "url": "https://v4.gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/releases/download/v5.3.36/PC28-Windows-amd64-20261116-v5.3.36.zip"
+          },
+          {
+            "label": "v6",
+            "url": "https://v6.gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/releases/download/v5.3.36/PC28-Windows-amd64-20261116-v5.3.36.zip"
+          },
+          {
+            "label": "cdn",
+            "url": "https://cdn.gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/releases/download/v5.3.36/PC28-Windows-amd64-20261116-v5.3.36.zip"
+          },
+          {
+            "label": "axisnow",
+            "url": "https://axisnow.gh-proxy.org/https://github.com/sunkai525/sunkai525.github.io/releases/download/v5.3.36/PC28-Windows-amd64-20261116-v5.3.36.zip"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "tag": "5.3.15",
     "name": "5.3.15",
-    "latest": true,
+    "latest": false,
     "prerelease": false,
     "date": "2026-11-15",
     "notesHtml": "<ul><li>账号与运行</li><li>新增账号代理清单：可为账号选择代理，平台请求按所选代理执行。</li><li>新增全局每日止盈/止损：模拟与真实分开统计，可按配置自动停止对应账号。</li><li>账号运行改为各自独立取数与处理：每个账号单独获取行情与开奖，按自己所在平台和房间结算与对账，不再依赖多账号合并取数。</li><li>账号卡可直接看到本账号的期号、距封盘和上期开奖信息。</li><li>支持可配置的续房间隔，优化下单请求与自动下注稳定性，减少盘口读取失败等误报。</li><li>后台重启时重置参与账号计数，运行状态展示更准确。</li><li>下单与结果处理</li><li>下单结果处理可配置：可按不同情况设置查单、重下、等待等处理方式，并提供全局配置页面与说明。</li><li>发单后支持按配置补查订单；结果未明的订单可按日期补拉核对，卡住的发单中订单支持人工标记失败。</li><li>连开判断与结算支持优先使用本地/平台开奖信息，不足时按规则回退补充。</li><li>对账逻辑更稳妥：避免把仍待确认的发单中订单误判为失败。</li><li>策略功能</li><li>新增「大周期策略」（固定/灵活/保底模式）：可设置连续出现 N1 次触发，等待该连开结束后再进入下注阶段；下注阶段按连赢或连输满 M 个周期（二选一）结束本次大周期并重新等待触发。开启时与连赢跳过/连输暂停互斥。</li><li>反投能力增强：灵活/保底模式反投生效；可选择反投输赢口径（按实际注单或按信号面），并统一连开、倍投、暂停、跳过等规则的计算方式。</li><li>连开触发、倍投、连输暂停、连赢跳过等策略规则进一步统一，实盘与复盘口径一致。</li><li>复盘与记录</li><li>复盘功能增强：支持按新的策略参数复盘，逐期显示触发、等待、进入下注、结束等状态，便于核对效果。</li><li>账号记录与状态展示更清楚：可查看跳过、暂停、大周期阶段及未下成原因。</li><li>历史页新增补账查漏操作，可手动补结算与查漏；启动时不再自动执行补账查漏。</li><li>下注记录与账号卡可显示反投及其口径信息。</li><li>界面与体验</li><li>策略说明改为问号提示，减少页面堆叠说明，阅读更集中。</li><li>连开相关文案统一（如“查最近 N 期、连续开 M 期”），配置、复盘和账号展示口径一致。</li><li>顶栏与账号行情展示调整：倒计时显示更简洁，账号卡信息布局更紧凑。</li><li>全局配置“下单结果”页面改为整页滚动，并补充参数与情况说明。</li><li>版本更新改为启动检查并支持定时检查与间隔配置。</li></ul>",
